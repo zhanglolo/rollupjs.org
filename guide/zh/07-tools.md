@@ -79,7 +79,7 @@ export default {
 
 ### 前置依赖（Peer dependencies）
 
-假设你正在构建一个类似 React 和 Lodash 这样具有前置依赖的库，如果你按照上述的方式设置外部引入，rollup 将会打包 *所有* 的引入项:
+假设你正在构建一个类似 React 和 Lodash 这样具有前置依赖的库，如果你按照上述的方式设置外部引入（external），rollup 将会打包 *所有* 的引入项:
 
 ```js
 import answer from 'the-answer';
