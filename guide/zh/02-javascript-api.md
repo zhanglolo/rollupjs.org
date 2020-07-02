@@ -228,7 +228,7 @@ loadConfigFile(path.resolve(__dirname, 'rollup.config.js'), { format: 'es' })
     // way the CLI does it:
     const bundle = await rollup.rollup(options);
     await Promise.all(options.output.map(bundle.write));
-    // You can also pass this directly to "rollup.watch"
+    // 你也可以将其直接传递给 "rollup.watch"
     rollup.watch(options);
   })
 ```
