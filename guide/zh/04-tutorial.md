@@ -417,4 +417,4 @@ npm install --save-dev systemjs
 </script>
 ```
 
-参见 [rollup-starter-code-splitting](https://github.com/rollup/rollup-starter-code-splitting) 示例，如何设置一个 web app，该 web app 在浏览器上使用本地 ES 模块，如果需要它支持回滚到 SystemJs。
+参见 [rollup-starter-code-splitting](https://github.com/rollup/rollup-starter-code-splitting) 示例，在有需要的情况下，如何设置一个在浏览器上使用本地 ES 模块的 Web app 回滚到 SystemJs。
