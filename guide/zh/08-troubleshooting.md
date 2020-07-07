@@ -10,7 +10,6 @@ title: 疑难解答
 
 这种处理方式效率更高，但也意味着一旦你使用了 `eval`，这个共享的作用域就被“污染”了， 然而，对于其他的打包器来说，如果模块 *没有* 使用过 eval 的话，就不会被“污染”。代码压缩工具无法在被“污染”的代码中去混淆变量名，因为它无法保证使用 eval 执行的代码不会再引用这些变量名。
 
-
 此外， **它带来了一个安全风险**，一个恶意的模块可以通过 `eval('SUPER_SEKRIT')` 访问另一个模块的私有变量。
 
 幸运的是，如果你 *确实* 想要 eval 中执行的代码可以访问到局部变量的话（这种情况你很有可能在做一些错误的事情！），你可以在这两种方式中选择任意一种达到相同的效果：
@@ -41,8 +40,6 @@ var eval2 = eval;
 
 但是 Rollup 必须谨慎地对待它要移除的代码以确保最终的代码能够正确无误地运行。如果一个导入的模块是有 *副作用* 的，不管是在你使用的这个模块内还是在全局环境中，Rollup 将会以安全的方式处理它同时也会把副作用包含进来。
 
-
-
 由于静态分析在一门动态语言中如 JavaScript 是很困难的，所以偶尔会有误报。lodash 就是一个很好的示例，由于它 *看起来* 好像是一个有很多副作用的模块，尽管有些地方它并非如此。你通常可以通过引入子模块来消除这样的误报（ e.g. 使用 `import map from 'lodash-es/map'` 替代 `import { map } from 'lodash-es'` ）。
 
 Rollup的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美——仅仅在 JavaScript 中如此。
@@ -57,7 +54,6 @@ Rollup的静态分析会逐渐优化提升，但是它不会在任何情况下�
 引入声明必须在引入的模块中导出对应的声明。例如，如果你在一个模块中有 `import a from './a.js'`， 与此同时 a.js 文件没有 `export default` 的声明，或者当你 `import {foo} from './b.js'` 与此同时 b.js 文件中没有导出 `foo`，那么 Rollup 就不会打包这些代码。
 
 这个错误经常出现在被 [@rollup/plugin-commonjs](https://github.com/rollup/plugins/tree/master/packages/commonjs) 转换的 CommonJS 模块中，它会导致原本合理的给 CommonJS 创建命名的导出操作失败，这是因为 CommonJS 无拘无束的特性和 JavaScript 模块中使我们受益的严格模式相违背。这个问题可以通过使用 [namedExports](https://github.com/rollup/plugins/tree/master/packages/commonjs#custom-named-exports) 选项解决，它允许你手动地填补信息差。
-
 
 
 
