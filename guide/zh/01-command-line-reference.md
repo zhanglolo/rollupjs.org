@@ -30,7 +30,7 @@ export default {
 export default { // 可以是一个数组（用于多个输入的情况）
   // 核心的输入选项
   external,
-  input, // required
+  input, // 必要项
   plugins,
 
   // 高级输入选项
@@ -52,11 +52,11 @@ export default { // 可以是一个数组（用于多个输入的情况）
   experimentalCacheExpiry,
   perf,
 
-  output: { // required (可能是一个数组，用于多输出的情况)
+  output: { // 必要项 (可以是一个数组，用于多输出的情况)
     // 核心的输出选项
     dir,
     file,
-    format, // required
+    format, // 必要项
     globals,
     name,
     plugins,
