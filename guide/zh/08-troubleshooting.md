@@ -2,11 +2,11 @@
 title: 疑难解答
 ---
 
-如果你遇到疑难问题，可以尝试在 [the Rollup Gitter](https://gitter.im/rollup/rollup) 创建一个 issue 讨论或者在 https://stackoverflow.com/questions/tagged/rollupjs 中发布你的问题。如果你找到了一个 bug 或者你认为 rollup 不能满足你的需求，请尝试 [创建 1 个 issue](https://github.com/rollup/rollup/issues)。 最后，你还可以在 Twitter 和 [@RollupJS](https://twitter.com/RollupJS) 取得联系。
+如果你遇到疑难问题，可以尝试在 [the Rollup Gitter](https://gitter.im/rollup/rollup) 创建一个 issue 讨论或者在 https://stackoverflow.com/questions/tagged/rollupjs 中发布你的问题。如果你找到了一个 bug 或者你认为 rollup 不能满足你的需求，请尝试[创建 1 个 issue](https://github.com/rollup/rollup/issues)。最后，你还可以在 Twitter 和 [@RollupJS](https://twitter.com/RollupJS) 取得联系。
 
 ### 避免使用 `eval`
 
-你很有可能已经知道 “`eval` 是魔鬼”，至少听别人这么说过。 但对 Rollup 来说它确实危害极大，原因是 rollup 的工作机制 —— 不像其它模块打包器那样会把每个模块包裹在独立的一个函数里面，相反，Rollup 把你所有的代码放在相同的作用域中。
+你很有可能已经知道 “`eval` 是魔鬼”，至少听别人这么说过。 但对 Rollup 来说它确实危害极大，原因是 rollup 的工作机制——不像其它模块打包器那样会把每个模块包裹在独立的一个函数里面，相反，Rollup 把你所有的代码放在相同的作用域中。
 
 这种处理方式效率更高，但也意味着一旦你使用了 `eval`，这个共享的作用域就被“污染”了， 然而，对于其他的打包器来说，如果模块 *没有* 使用过 eval 的话，就不会被“污染”。代码压缩工具无法在被“污染”的代码中去混淆变量名，因为它无法保证使用 eval 执行的代码不会再引用这些变量名。
 
@@ -45,7 +45,7 @@ var eval2 = eval;
 
 因为静态分析在一门动态语言如 JavaScript 中是很困难的，偶尔会有误报。lodash 就是一个很好的示例，由于它 *看起来* 好像是一个有很多副作用的模块，尽管有些地方它并非如此。你通常可以通过引入子模块来消除这样的误报（ e.g. 使用 `import map from 'lodash-es/map'` 替代 `import { map } from 'lodash-es'` ）。
 
-rollup的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美 —— 仅仅在 JavaScript 中如此。
+rollup的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美——仅仅在 JavaScript 中如此。
 
 
 ### Error: "[name] is not exported by [module]"
@@ -74,7 +74,7 @@ rollup的静态分析会逐渐优化提升，但是它不会在任何情况下�
 
 如果你给包文件创建了 sourcemap（`sourceMap: true` or `sourceMap: 'inline'`），你会看到这个警告，此时你使用了一个或者多个插件来转换代码，但是没有给转换也生成一个 sourcemap。
 
-通常情况下，如果一个插件配置了 `sourceMap: false` —— 你所要做仅仅是修改它，只有在这种情况下会省略 sourcemap。如果在正常情况下这个插件没有创建 sourcemap，你可以尝试创建一个 issue 给这个插件的作者。
+通常情况下，如果一个插件配置了 `sourceMap: false` ——你所要做仅仅是修改它，只有在这种情况下会省略 sourcemap。如果在正常情况下这个插件没有创建 sourcemap，你可以尝试创建一个 issue 给这个插件的作者。
 
 
 ### Warning: "Treating [module] as external dependency"
@@ -85,7 +85,7 @@ Rollup 只会默认处理  *相关联的* 模块id，这意味着如果你像这
 import moment from 'moment';
 ```
 
-结果是 `moment` 并不会被包含在你的包中 —— 相反，它会是一个在运行时才需要被加载的外部模块。如果这不是你想要的，你可以通过 `external` 选项来消除这些警告，来使你的意图更加清晰：
+结果是 `moment` 并不会被包含在你的包中——相反，它会是一个在运行时才需要被加载的外部模块。如果这不是你想要的，你可以通过 `external` 选项来消除这些警告，来使你的意图更加清晰：
 
 
 ```js
@@ -98,6 +98,6 @@ export default {
 };
 ```
 
-如果你 *确实* 想要把这个模块包含在你的包中，你需要告诉 Rollup 怎么去找到它。在多数情况下，这是一个关于如何使用  [@rollup/plugin-node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) 的问题。
+如果你 *确实* 想要把这个模块包含在你的包中，你需要告诉 Rollup 怎么去找到它。在多数情况下，这是一个关于如何使用 [@rollup/plugin-node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) 的问题。
 
 有些模块，比如 `events` 或者 `util`这些 Node.js 的内建模块。如果你想要包含这些模块（例如，这么做可以使你的包就在浏览器环境也可以运行），或许需要使用 [rollup-plugin-node-polyfills](https://github.com/ionic-team/rollup-plugin-node-polyfills)。
