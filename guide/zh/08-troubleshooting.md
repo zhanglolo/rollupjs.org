@@ -2,7 +2,7 @@
 title: 疑难解答
 ---
 
-如遇到疑难问题，你可以在 [the Rollup Gitter](https://gitter.im/rollup/rollup) 讨论这个 issue 或在 https://stackoverflow.com/questions/tagged/rollupjs 中发布你的问题。如果你找到了一个 bug 或者认为 Rollup 不能满足你的需求，请尝试[创建 1 个 issue](https://github.com/rollup/rollup/issues)。最后，你也可以在 Twitter 和 [@RollupJS](https://twitter.com/RollupJS) 取得联系。
+如遇到疑难问题，你可以在 [the Rollup Gitter](https://gitter.im/rollup/rollup) 讨论这个 issue 或者在 https://stackoverflow.com/questions/tagged/rollupjs 中发布你的问题。如果你找到了一个 bug 或者认为 Rollup 不能满足你的需求，请尝试[创建 1 个 issue](https://github.com/rollup/rollup/issues)。最后，你也可以在 Twitter 和 [@RollupJS](https://twitter.com/RollupJS) 取得联系。
 
 ### 避免使用 `eval`
 
@@ -42,9 +42,10 @@ var eval2 = eval;
 但是 Rollup 必须谨慎地对待它要移除的代码以确保最终的代码能够正确无误地运行。如果一个导入的模块是有 *副作用* 的，不管是在你使用的这个模块内还是在全局环境中，Rollup 将会以安全的方式处理它同时也会把副作用包含进来。
 
 
-因为静态分析在一门动态语言中如 JavaScript 是很困难的，偶尔会有误报。lodash 就是一个很好的示例，由于它 *看起来* 好像是一个有很多副作用的模块，尽管有些地方它并非如此。你通常可以通过引入子模块来消除这样的误报（ e.g. 使用 `import map from 'lodash-es/map'` 替代 `import { map } from 'lodash-es'` ）。
 
-rollup的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美——仅仅在 JavaScript 中如此。
+由于静态分析在一门动态语言中如 JavaScript 是很困难的，所以偶尔会有误报。lodash 就是一个很好的示例，由于它 *看起来* 好像是一个有很多副作用的模块，尽管有些地方它并非如此。你通常可以通过引入子模块来消除这样的误报（ e.g. 使用 `import map from 'lodash-es/map'` 替代 `import { map } from 'lodash-es'` ）。
+
+Rollup的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美——仅仅在 JavaScript 中如此。
 
 
 ### Error: "[name] is not exported by [module]"
@@ -53,7 +54,7 @@ rollup的静态分析会逐渐优化提升，但是它不会在任何情况下�
 
 > 'foo' is not exported by bar.js (imported by baz.js)
 
-引入声明必须在引入的模块中导出对应的声明。例如，如果你在一个模块中有 `import a from './a.js'`， 与此同时 a.js 文件没有 `export default` 声明，或者当你 `import {foo} from './b.js'` 与此同时 b.js 文件中没有导出 `foo`，那么 Rollup 就不会打包这些代码。
+引入声明必须在引入的模块中导出对应的声明。例如，如果你在一个模块中有 `import a from './a.js'`， 与此同时 a.js 文件没有 `export default` 的声明，或者当你 `import {foo} from './b.js'` 与此同时 b.js 文件中没有导出 `foo`，那么 Rollup 就不会打包这些代码。
 
 这个错误经常出现在被 [@rollup/plugin-commonjs](https://github.com/rollup/plugins/tree/master/packages/commonjs) 转换的 CommonJS 模块中，它会导致原本合理的给 CommonJS 创建命名的导出操作失败，这是因为 CommonJS 无拘无束的特性和 JavaScript 模块中使我们受益的严格模式相违背。这个问题可以通过使用 [namedExports](https://github.com/rollup/plugins/tree/master/packages/commonjs#custom-named-exports) 选项解决，它允许你手动地填补信息差。
 
@@ -64,7 +65,9 @@ rollup的静态分析会逐渐优化提升，但是它不会在任何情况下�
 ### Error: "this is undefined"
 
 在一个 JavaScript 模块中，在顶级作用域（即：函数外部） `this` 是 `undefined` 的。因此，Rollup 会重写所有的 `this` 引用为 `undefined`，使其最终的行为跟原生支持模块时的行为一致。
+
 在一些偶然情况下，让 `this` 表示成别的含义是有效的。如果你的包出现了错误，你可以使用  `options.context` 和 `options.moduleContext` 去改变这个行为。
+
 
 
 
@@ -98,4 +101,4 @@ export default {
 
 如果你 *确实* 想要把这个模块包含在你的包中，你需要告诉 Rollup 怎么去找到它。在多数情况下，这是一个关于如何使用 [@rollup/plugin-node-resolve](https://github.com/rollup/plugins/tree/master/packages/node-resolve) 的问题。
 
-有些模块，比如 `events` 或者 `util`这些 Node.js 的内建模块。如果你想要包含这些模块（比如，这么做可以使你的包就在浏览器环境也可以运行），你或许需要使用 [rollup-plugin-node-polyfills](https://github.com/ionic-team/rollup-plugin-node-polyfills)。
+有些模块，比如 `events` 或者 `util`这些 Node.js 的内建模块。如果你想要包含这些模块（例如，这么做可以使你的包就在浏览器环境也可以运行），你或许需要使用 [rollup-plugin-node-polyfills](https://github.com/ionic-team/rollup-plugin-node-polyfills)。
