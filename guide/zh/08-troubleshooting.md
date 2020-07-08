@@ -6,14 +6,13 @@ title: 疑难解答
 
 ### 避免使用 `eval`
 
-你很有可能已经知道“`eval` 是魔鬼”，至少听别人这么说过。 但对 Rollup 来说它确实危害极大，原因是 Rollup 的工作机制——不像其它模块打包器那样把每个模块包裹在一个函数里，相反，Rollup 把你所有的代码都放在相同的作用域中。
+你很有可能已经知道“`eval` 是魔鬼”，至少听别人这么说过。 但对 Rollup 来说它确实危害极大，原因是 Rollup 的工作机制 – 不像其它模块打包器那样把每个模块包裹在一个函数里，相反，Rollup 把你所有的代码都放在相同的作用域中。
 
 这种处理方式效率更高，但也意味着一旦你使用了 `eval`，这个共享的作用域就被“污染”了， 然而，对于其他的打包器来说，如果模块 *没有* 使用过 eval 的话，就不会被“污染”。代码压缩工具无法在被“污染”的代码中去混淆变量名，因为它无法保证使用 eval 执行的代码不会再引用这些变量名。
 
 此外， **它带来了一个安全风险**，一个恶意的模块可以通过 `eval('SUPER_SEKRIT')` 访问另一个模块的私有变量。
 
 幸运的是，如果你 *确实* 想要 eval 中执行的代码可以访问到局部变量的话（这种情况你很有可能在做一些错误的事情！），你可以在这两种方式中选择任意一种达到相同的效果：
-
 
 #### eval2 = eval
 
@@ -42,7 +41,7 @@ var eval2 = eval;
 
 由于静态分析在一门动态语言中如 JavaScript 是很困难的，所以偶尔会有误报。lodash 就是一个很好的示例，由于它 *看起来* 好像是一个有很多副作用的模块，尽管有些地方它并非如此。你通常可以通过引入子模块来消除这样的误报（ e.g. 使用 `import map from 'lodash-es/map'` 替代 `import { map } from 'lodash-es'` ）。
 
-Rollup的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美——仅仅在 JavaScript 中如此。
+Rollup 的静态分析会逐渐优化提升，但是它不会在任何情况下都很完美 – 仅仅在 JavaScript 中如此。
 
 
 ### Error: "[name] is not exported by [module]"
@@ -56,8 +55,6 @@ Rollup的静态分析会逐渐优化提升，但是它不会在任何情况下�
 这个错误经常出现在被 [@rollup/plugin-commonjs](https://github.com/rollup/plugins/tree/master/packages/commonjs) 转换的 CommonJS 模块中，它会导致原本合理的给 CommonJS 创建命名的导出操作失败，这是因为 CommonJS 无拘无束的特性和 JavaScript 模块中使我们受益的严格模式相违背。这个问题可以通过使用 [namedExports](https://github.com/rollup/plugins/tree/master/packages/commonjs#custom-named-exports) 选项解决，它允许你手动地填补信息差。
 
 
-
-
 ### Error: "this is undefined"
 
 在一个 JavaScript 模块中，在顶级作用域（即：函数外部） `this` 是 `undefined` 的。因此，Rollup 会重写所有的 `this` 引用为 `undefined`，使其最终的行为跟原生支持模块时的行为一致。
@@ -65,13 +62,11 @@ Rollup的静态分析会逐渐优化提升，但是它不会在任何情况下�
 在一些偶然情况下，让 `this` 表示成别的含义是有效的。如果你的包出现了错误，你可以使用  `options.context` 和 `options.moduleContext` 去改变这个行为。
 
 
-
-
 ### Warning: "Sourcemap is likely to be incorrect"
 
 如果你给包文件创建了 sourcemap（`sourceMap: true` or `sourceMap: 'inline'`），你就会看到这个警告，此时应该是正在使用一个或者多个插件来转换代码但是却没有给转换也生成一个 sourcemap。
 
-通常情况下，如果一个插件配置了 `sourceMap: false` ——你所要做仅仅是修改它，只有在这种情况下会省略 sourcemap。如果在正常情况下这个插件没有创建 sourcemap，你可以尝试创建一个 issue 给这个插件的作者。
+通常情况下，如果一个插件如果它（注意是插件，而不是你准备打包的项目）配置了 `sourceMap: false` 这种情况下不会生成sourcemap – 你要做就是让这个插件做修改。如果这个插件阻止生成sourcemap，你可以尝试创建一个 issue 给这个插件的作者。
 
 
 ### Warning: "Treating [module] as external dependency"
@@ -82,8 +77,7 @@ Rollup 只会默认处理  *相关联的* 模块id，这意味着如果你像这
 import moment from 'moment';
 ```
 
-结果是 `moment` 并不会被包含在你的包中——相反，它会是在运行时才需要被加载的外部模块。如果这不是你想要的，你可以通过 `external` 选项来消除这些警告，来使你的意图更加清晰：
-
+结果是 `moment` 并不会被包含在你的包中 – 相反，它会是在运行时才需要被加载的外部模块。如果这不是你想要的，你可以通过 `external` 选项来消除这些警告，来使你的意图更加清晰：
 
 ```js
 // rollup.config.js
