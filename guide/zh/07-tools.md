@@ -4,7 +4,7 @@ title: Rollup 集成第三方工具
 
 ### 使用 NPM 包
 
-有时候，您的项目可能需要依赖于一些 NPM 包。与 Webpack 和 Browserify 等其他打包器不同，Rollup 并不能“开箱即用”地处理 NPM 包的依赖关系——我们需要添加一些配置。
+有时候，您的项目可能需要依赖于一些 NPM 包。与 webpack 和 Browserify 等其他打包器不同，Rollup 并不能“开箱即用”地处理 NPM 包的依赖关系——我们需要添加一些配置。
 
 让我们添加一个简单的依赖， [the-answer](https://www.npmjs.com/package/the-answer)。该依赖可以输出关于生命、宇宙和一切的问题的答案：
 
@@ -181,7 +181,7 @@ export default {
 npm i -D @babel/core @babel/preset-env
 ```
 
-现在运行 Rollup 将创建一个 bundle ——除非我们并未添加任何 ES2015 的功能。 让我们通过编辑 `src/main.js` 来改变它：
+现在运行 Rollup 将创建一个 bundle ——除了我们并未添加任何 ES2015 的功能。 让我们通过编辑 `src/main.js` 来改变它：
 
 ```js
 // src/main.js
