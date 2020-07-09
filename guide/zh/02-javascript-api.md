@@ -2,7 +2,7 @@
 title: JavaScript API
 ---
 
-Rollup 提供了可从 Node.js 使用的 JavaScript API。 您几乎不需要使用它，并且应该使用命令行 API，除非您要扩展Rollup本身或者使用它进行一些深奥的操作，比如通过编程生成 bundle。
+Rollup 提供了可在 Node.js 中使用的 JavaScript API。一般情况下不需要使用它，而应使用命令行 API，除非你要扩展 Rollup 本身或者使用它进行一些高级操作，比如通过编程生成 bundle。
 
 ### rollup.rollup
 
