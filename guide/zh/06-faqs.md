@@ -103,4 +103,3 @@ Rollup 已经被用在了很多流行的 Javascript 库中，也可以用于构�
 #### Rollup 的 logo 是谁做的？这太可爱了。
 
 是 [Julian Lloyd](https://twitter.com/jlmakes)!
-
