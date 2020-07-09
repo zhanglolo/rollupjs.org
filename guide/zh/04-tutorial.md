@@ -248,7 +248,7 @@ _注: 只有我们确实需要的数据会被导入 – `name` 和 `devDependenc
 npm install --save-dev rollup-plugin-terser
 ```
 
-修改你的 `rollup.config.js` 文件，增加第二项压缩输出。 压缩格式, 选择 `iife`。这种格式下包裹代码在浏览器中能够通过 `script` 标签自执行，避免其他代码的植入。当我们导出时，需要提供一个将通过 bundle 创建的全局变量名称，使导出的代码能被其他代码所使用。
+修改你的 `rollup.config.js` 文件，增加第二项压缩输出。 压缩格式选择 `iife`。这种格式下包裹代码在浏览器中能够通过 `script` 标签自执行，避免与其他代码产生交互。当我们导出时，需要提供由生成 bundle 创建的一个全局变量，这样其他代码可以通过该变量使用到此导出的代码。
 
 ```js
 // rollup.config.js
@@ -273,7 +273,7 @@ export default {
 };
 ```
 
-除了 `bundle.js` 之外，现在来创建 Rollup 的第二个文件 `bundle.min.js`:
+除了 `bundle.js` 之外，Rollup 会创建第二个文件 `bundle.min.js`:
 
 ```js
 var version=function(){"use strict";var n="1.0.0";return function(){console.log("version "+n)}}();
@@ -282,9 +282,9 @@ var version=function(){"use strict";var n="1.0.0";return function(){console.log(
 
 ### 代码分割
 
-就代码分割来说, Rollup 有很多场景使用了代码分割自动成块，例如动态加载或者多入口, [`output.manualChunks`](guide/en/#outputmanualchunks) 配置项告诉了 Rollup 哪些模块需要分割成块。
+就代码分割来说, Rollup 有很多场景自动将代码分割成块，例如动态加载或者多入口, 有一个办法，通过 [`output.manualChunks`](guide/en/#outputmanualchunks) 配置项告可以显示地告诉 Rollup 哪些模块需要分割成块。
 
-为了使用代码分割特性来完成动态懒加载 (仅在一个函数执行之后加载其导入的模块), 回到最初的例子并修改 `src/main.js`，替换静态加载为 动态加载 `src/foo.js`:
+为了使用代码分割特性来完成动态懒加载 (仅在一个函数执行之后加载其导入的模块), 我们回到最初的例子并修改 `src/main.js`，将加载 `src/foo.js` 由静态加载改为动态加载 :
 
 ```js
 // src/main.js
@@ -293,7 +293,7 @@ export default function () {
 }
 ```
 
-Rollup 将采用动态导入的方式去构建一个仅需加载的分片块。为了能让 Rollup 知道哪里是第二个分块，替换 `--file` 可选项，我们使用 `--dir` 可选项设置一个文件夹用来输出:
+Rollup 将采用动态导入的方式去构建一个仅需加载的块 （chunk）。为了能让 Rollup 知道将分片块放在哪里，我们会使用 `--dir` 来替换 `--file` 可选项，来设置一个文件夹用于输出:
 
 ```
 rollup src/main.js -f cjs -d dist
@@ -301,13 +301,13 @@ rollup src/main.js -f cjs -d dist
 
 它将会创建一个 `dist` 文件夹，其中包含两个文件: `main.js` 和 `chunk-[hash].js`，这里的 `[hash]` 是基于 hash 字符串内容。你可以通过指定 [`output.chunkFileNames`](guide/en/#outputchunkfilenames) 和 [`output.entryFileNames`](guide/en/#outputentryfilenames) 可选项提供自己的命名模式。
 
-在相同输出之前你仍然可以运行你的代码。 `./foo.js` 的加载和编译尽管有一点慢，但是它只会在我们首次调取导出函数时执行一次。
+你仍然可以以相同的输出内容运行你的代码。即使加载和解析 `./foo.js` 有一点慢，但是它只会在我们首次调用导出函数时执行一次。
 
 ```
 node -e "require('./dist/main.js')()"
 ```
 
-如果我们没有使用 `--dir` 可选项，Rollup 将会再次打印块到 `stdout` 中，添加注释来凸显这个块的边界:
+如果我们没有使用 `--dir` 可选项，Rollup 将会再次将块信息打印块到 `stdout` 中，添加注释来突出这个块的边界:
 
 ```js
 //→ main.js:
@@ -376,9 +376,9 @@ var foo = 'hello world!';
 exports.default = foo;
 ```
 
-注意多个入口如何导入相同的共享块。Rollup 不会复制代码而是会插入额外的满足需求最小新增块。再次，通过 `--dir` 可选项写文件到桌面上。
+注意多个入口如何导入相同的共享块。Rollup 不会重复代码而是会新增额外的满足需求最低限度必要的块 （chunk）.再次，通过 `--dir` 可选项写文件到电脑的电脑的硬盘上。
 
-你可以由不同浏览器规范：本地 ES 模块，AMD 加载或者 SystemJS 打包出相同的代码。
+你可以通过原生 ES 模块，符合 AMD 规范的加载或者 SystemJS 为你的浏览器构建相同的代码。
 
 例如，使用 `-f es` 作为本地模块:
 
@@ -417,4 +417,4 @@ npm install --save-dev systemjs
 </script>
 ```
 
-参见 [rollup-starter-code-splitting](https://github.com/rollup/rollup-starter-code-splitting) 示例，在有需要的情况下，如何设置一个在浏览器上使用本地 ES 模块的 Web app 回滚到 SystemJs。
+参见 [rollup-starter-code-splitting](https://github.com/rollup/rollup-starter-code-splitting) 示例，在有需要的情况下，如何设置一个在浏览器上使用原生 ES 模块的网页应用同时具备回退到 SystemJs 的能力。
