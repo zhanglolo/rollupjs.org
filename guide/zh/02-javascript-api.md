@@ -2,92 +2,92 @@
 title: JavaScript API
 ---
 
-Rollup provides a JavaScript API which is usable from Node.js. You will rarely need to use this, and should probably be using the command line API unless you are extending Rollup itself or using it for something esoteric, such as generating bundles programmatically.
+Rollup 提供了可在 Node.js 中使用的 JavaScript API。一般情况下不需要使用它，而应使用命令行 API，除非你要扩展 Rollup 本身或者使用它进行一些高级操作，比如通过编程生成 bundle。
 
 ### rollup.rollup
 
-The `rollup.rollup` function receives an input options object as parameter and returns a Promise that resolves to a `bundle` object with various properties and methods as shown below. During this step, Rollup will build the module graph and perform tree-shaking, but will not generate any output.
+`rollup.rollup` 函数接收输入选项对象作为参数，并返回一个 Promise，该 Promise 解析为具有各种属性和方法的 `bundle` 对象，如下所示。 在此步骤中，Rollup 将构建模块图并执行 tree-shaking，但不会生成任何输出。
 
-On a `bundle` object, you can call `bundle.generate` multiple times with different output options objects to generate different bundles in-memory. If you directly want to write them to disk, use `bundle.write` instead.
+在 `bundle` 对象上，您可以使用不同的输出选项对象多次调用 `bundle.generate`，以在内存中生成不同的 bundle。 如果直接将它们写入磁盘，请改用 `bundle.write`。
 
 ```javascript
 const rollup = require('rollup');
 
-// see below for details on the options
+// 有关选项的详细信息，请参见下文
 const inputOptions = {...};
 const outputOptions = {...};
 
 async function build() {
-  // create a bundle
+  // 创建一个 bundle
   const bundle = await rollup.rollup(inputOptions);
 
-  console.log(bundle.watchFiles); // an array of file names this bundle depends on
+  console.log(bundle.watchFiles); // 该 bundle 依赖的文件名数组
 
-  // generate output specific code in-memory
-  // you can call this function multiple times on the same bundle object
+  // 在内存中生成输出特定的代码
+  // 您可以在同一个 bundle 对象上多次调用此函数
   const { output } = await bundle.generate(outputOptions);
 
   for (const chunkOrAsset of output) {
     if (chunkOrAsset.type === 'asset') {
-      // For assets, this contains
+      // 对于assets，包含
       // {
-      //   fileName: string,              // the asset file name
-      //   source: string | Uint8Array    // the asset source
-      //   type: 'asset'                  // signifies that this is an asset
+      //   fileName: string,              // asset 文件名
+      //   source: string | Uint8Array    // asset 资源
+      //   type: 'asset'                  // 表示这是一个 asset
       // }
       console.log('Asset', chunkOrAsset);
     } else {
-      // For chunks, this contains
+      // 对于chunks, 包含
       // {
-      //   code: string,                  // the generated JS code
-      //   dynamicImports: string[],      // external modules imported dynamically by the chunk
-      //   exports: string[],             // exported variable names
-      //   facadeModuleId: string | null, // the id of a module that this chunk corresponds to
-      //   fileName: string,              // the chunk file name
-      //   imports: string[],             // external modules imported statically by the chunk
-      //   isDynamicEntry: boolean,       // is this chunk a dynamic entry point
-      //   isEntry: boolean,              // is this chunk a static entry point
-      //   map: string | null,            // sourcemaps if present
-      //   modules: {                     // information about the modules in this chunk
+      //   code: string,                  // 生成的JS代码
+      //   dynamicImports: string[],      // chunk 动态导入的外部模块
+      //   exports: string[],             // 导出的变量名
+      //   facadeModuleId: string | null, // 该chunk对应的模块的ID
+      //   fileName: string,              // chunk的文件名
+      //   imports: string[],             // chunk 静态导入的外部模块
+      //   isDynamicEntry: boolean,       // 该 chunk 是否是动态入口点
+      //   isEntry: boolean,              // 该 chunk 是否是静态入口点
+      //   map: string | null,            // sourcemaps(如果存在)
+      //   modules: {                     // 此 chunk 中模块的信息
       //     [id: string]: {
-      //       renderedExports: string[]; // exported variable names that were included
-      //       removedExports: string[];  // exported variable names that were removed
-      //       renderedLength: number;    // the length of the remaining code in this module
-      //       originalLength: number;    // the original length of the code in this module
+      //       renderedExports: string[]; // 导出的已包含变量名
+      //       removedExports: string[];  // 导出的已删除变量名
+      //       renderedLength: number;    // 模块中剩余代码的长度
+      //       originalLength: number;    // 模块中代码的原始长度
       //     };
       //   },
-      //   name: string                   // the name of this chunk as used in naming patterns
-      //   type: 'chunk',                 // signifies that this is a chunk
+      //   name: string                   // 命名模式中使用的 chunk 的名称
+      //   type: 'chunk',                 // 表示这是一个chunk
       // }
       console.log('Chunk', chunkOrAsset.modules);
     }
   }
 
-  // or write the bundle to disk
+  // 或者将bundle写入磁盘
   await bundle.write(outputOptions);
 }
 
 build();
 ```
 
-#### inputOptions object
+#### 输入选项对象(inputOptions object)
 
-The `inputOptions` object can contain the following properties (see the [big list of options](guide/en/#big-list-of-options) for full details on these):
+`inputOptions` 对象可以包含下列属性(查看[big list of options](guide/en/#big-list-of-options) 以获得这些参数更详细的信息)：
 
 ```js
 const inputOptions = {
-  // core input options
+  // 核心输入选项
   external,
-  input, // required
+  input, // 必选
   plugins,
 
-  // advanced input options
+  // 高级输入选项
   cache,
   onwarn,
   preserveEntrySignatures,
   strictDeprecations,
 
-  // danger zone
+  // 危险选项
   acorn,
   acornInjectPlugins,
   context,
@@ -96,27 +96,27 @@ const inputOptions = {
   shimMissingExports,
   treeshake,
 
-  // experimental
+  // 实验型选项
   experimentalCacheExpiry,
   perf
 };
 ```
 
-#### outputOptions object
+#### 输出选项对象(outputOptions object)
 
-The `outputOptions` object can contain the following properties (see the [big list of options](guide/en/#big-list-of-options) for full details on these):
+`outputOptions` 对象可以包含下列属性(查看[big list of options](guide/en/#big-list-of-options) 以获得这些参数更详细的信息)：
 
 ```js
 const outputOptions = {
-  // core output options
+  // 核心输出选项
   dir,
   file,
-  format, // required
+  format, // 必选
   globals,
   name,
   plugins,
 
-  // advanced output options
+  // 高级输出选项
   assetFileNames,
   banner,
   chunkFileNames,
@@ -139,7 +139,7 @@ const outputOptions = {
   sourcemapFile,
   sourcemapPathTransform,
 
-  // danger zone
+  // 危险选项
   amd,
   esModule,
   exports,
@@ -155,7 +155,7 @@ const outputOptions = {
 
 ### rollup.watch
 
-Rollup also provides a `rollup.watch` function that rebuilds your bundle when it detects that the individual modules have changed on disk. It is used internally when you run Rollup from the command line with the `--watch` flag.
+Rollup 也提供了 `rollup.watch` 函数，当它检测到磁盘上单个模块已经改变，它会重新构建你的 bundle。 当你通过命令行运行 Rollup，并带上 "--watch" 标记时，它将在内部使用。
 
 ```js
 const rollup = require('rollup');
@@ -164,21 +164,21 @@ const watchOptions = {...};
 const watcher = rollup.watch(watchOptions);
 
 watcher.on('event', event => {
-  // event.code can be one of:
-  //   START        — the watcher is (re)starting
-  //   BUNDLE_START — building an individual bundle
-  //   BUNDLE_END   — finished building a bundle
-  //   END          — finished building all bundles
-  //   ERROR        — encountered an error while bundling
+  // event.code 会是下面其中一个：
+  //   START        — 监听器正在启动（重启）
+  //   BUNDLE_START — 构建单个 bundle
+  //   BUNDLE_END   — 完成 bundle 构建
+  //   END          — 完成所有bundle构建
+  //   ERROR        — 构建时遇到错误
 });
 
-// stop watching
+// 停止监听
 watcher.close();
 ```
 
-#### watchOptions
+#### 监听选项(watchOptions)
 
-The `watchOptions` argument is a config (or an array of configs) that you would export from a config file.
+`watchOptions` 参数是从配置文件导出的配置(或配置数组)。
 
 ```js
 const watchOptions = {
@@ -195,37 +195,41 @@ const watchOptions = {
 };
 ```
 
-See above for details on `inputOptions` and `outputOptions`, or consult the [big list of options](guide/en/#big-list-of-options) for info on `chokidar`, `include` and `exclude`.
+查看以上文档了解更多 `inputOptions` 和 `outputOptions` 的细节, 或参考 [big list of options](guide/en/#big-list-of-options) 获取与 `chokidar`, `include` 和 `exclude` 有关的信息。
 
-#### Programmatically loading a config file
+#### 以编程方式加载配置文件
 
-In order to aid in generating such a config, rollup exposes the helper it uses to load config files in its command line interface via a separate entry-point. This helper receives a resolved `fileName` and optionally an object containing command line parameters:
+为了帮助生成这样的配置，rollup 通过一个单独的入口点公开了用于在命令行界面中加载配置文件的帮助程序。 该帮助程序接收解析的 `fileName` 和可选的包含命令行参数的对象：
 
 ```js
 const loadConfigFile = require('rollup/dist/loadConfigFile');
 const path = require('path');
 const rollup = require('rollup');
 
-// load the config file next to the current script;
-// the provided config object has the same effect as passing "--format es"
-// on the command line and will override the format of all outputs
+// 加载当前脚本旁边的配置文件；
+// 提供的配置对象与在命令行上传递 "--format es" 具有相同的效果，并将覆盖所有输出的格式
 loadConfigFile(path.resolve(__dirname, 'rollup.config.js'), { format: 'es' })
   .then(async ({options, warnings}) => {
+    // “warnings”包装了CLI传递的默认`onwarn`处理程序。
+    // 输出所有警告：
     // "warnings" wraps the default `onwarn` handler passed by the CLI.
     // This prints all warnings up to this point:
     console.log(`We currently have ${warnings.count} warnings`);
 
+    // 输出所有延迟的警告：
     // This prints all deferred warnings
     warnings.flush();
     
+    // options是一个带有其他“output”属性的“ inputOptions”对象，该属性包含一个“ outputOptions”数组。
+    // 以下将生成所有输出，并将它们以与CLI相同的方式写入磁盘：
     // options is an "inputOptions" object with an additional "output"
     // property that contains an array of "outputOptions".
     // The following will generate all outputs and write them to disk the same
     // way the CLI does it:
     const bundle = await rollup.rollup(options);
     await Promise.all(options.output.map(bundle.write));
- 
-    // You can also pass this directly to "rollup.watch"
+
+    // 你也可以将其直接传递给 "rollup.watch"
     rollup.watch(options);
   })
 ```
