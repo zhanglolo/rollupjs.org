@@ -20,18 +20,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      - name: Build and Deploy
-        uses: JamesIves/github-pages-deploy-action@master
-        env:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-          BASE_BRANCH: cn
-          BRANCH: gh-pages
-          FOLDER: dist
-          BUILD_SCRIPT: yarn && yarn build
-      - name: Check Build
+      - name: Install and Build
+        run: |
+        yarn install --pure-lockfile
+        yarn build
+
+      - name: Grant Permission
         run: |
           sudo -i
-          sudo chown -R $USER ./dist
+          sudo chown -R $USER ./export
 
       - name: Docschina Github Action
         id: deployStatic
