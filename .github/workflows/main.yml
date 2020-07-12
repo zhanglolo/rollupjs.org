@@ -22,8 +22,8 @@ jobs:
 
       - name: Install and Build
         run: |
-        yarn install --pure-lockfile
-        yarn build
+          yarn install --pure-lockfile
+          yarn build
 
       - name: Grant Permission
         run: |
