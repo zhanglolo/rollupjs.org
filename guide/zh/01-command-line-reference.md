@@ -1,12 +1,12 @@
 ---
-title: 命令行接口
+title: Command Line Interface
 ---
 
-我们一般在命令行中使用 Rollup。你也可以通过一份可选的 Rollup 配置文件来简化命令行操作，同时还可以通过配置文件启用 Rollup 的高级特性。
+Rollup should typically be used from the command line. You can provide an  optional Rollup configuration file to simplify command line usage and enable advanced Rollup functionality.
 
-### 配置文件
+### Configuration Files
 
-Rollup 的配置文件并不是必须的，但是配置文件非常强大而且很方便，所以我们**推荐你能够使用**。配置文件是一个 ES 模块，它对外导出一个对象，这个对象配置了我们想要的一些选项：
+Rollup configuration files are optional, but they are powerful and convenient and thus **recommended**. A config file is an ES module that exports a default object with the desired options:
 
 ```javascript
 export default {
@@ -18,28 +18,28 @@ export default {
 };
 ```
 
-通常，这个配置文件位于你项目的根目录，并且命名为 `rollup.config.js`。Rollup 将会在配置文件被依赖之前，在后台将配置文件和 CommonJS 的相关依赖项进行转译和打包，这样做的优点就是你可以与 ES 模块代码库共享代码，同时与 Node 生态完全互通。
+Typically, it is called `rollup.config.js` and sits in the root directory of your project. Behind the scenes, Rollup will transpile and bundle this file and its relative dependencies to CommonJS before requiring it, which has the advantage that you can share code with an ES module code base while having full interoperability with the Node ecosystem.
 
-如果你想要使用 `require` 和 `module.exports` 将配置文件写成一个 CommonJS 模块，则应该将文件扩展名更改为 `.cjs`，这会阻止 Rollup 尝试转译文件。此外，如果你使用的是 Node 13+，则将文件扩展名更改为 `.mjs` 也可以阻止 Rollup 进行编译，并将文件导入为 ES 模块。有关更多的详细信息以及为什么会存在这样的场景，请参见 [使用未转译的配置文件](guide/en/#using-untranspiled-config-files)。
+If you want to write your config as a CommonJS module using `require` and `module.exports`, you should change the file extension to `.cjs`, which will prevent Rollup from trying to transpile the file. Furthermore if you are on Node 13+, changing the file extension to `.mjs` will also prevent Rollup from transpiling it but import the file as an ES module instead. See [using untranspiled config files](guide/en/#using-untranspiled-config-files) for more details and why you might want to do this.
 
-配置文件支持的选项如下所示。关于每个选项的详情请查看 [配置项的完整列表](guide/en/#big-list-of-options)：
+Config files support the options listed below. Consult the [big list of options](guide/en/#big-list-of-options) for details on each option:
 
 ```javascript
 // rollup.config.js
 
-export default { // 可以是一个数组（用于多个输入的情况）
-  // 核心的输入选项
+export default { // can be an array (for multiple inputs)
+  // core input options
   external,
-  input, // 必要项
+  input, // required
   plugins,
 
-  // 高级输入选项
+  // advanced input options
   cache,
   onwarn,
   preserveEntrySignatures,
   strictDeprecations,
 
-  // 危险区
+  // danger zone
   acorn,
   acornInjectPlugins,
   context,
@@ -48,20 +48,20 @@ export default { // 可以是一个数组（用于多个输入的情况）
   shimMissingExports,
   treeshake,
 
-  // 实验性
+  // experimental
   experimentalCacheExpiry,
   perf,
 
-  output: { // 必要项 (可以是一个数组，用于多输出的情况)
-    // 核心的输出选项
+  output: { // required (can be an array, for multiple outputs)
+    // core output options
     dir,
     file,
-    format, // 必要项
+    format, // required
     globals,
     name,
     plugins,
 
-    // 高级输出选项
+    // advanced output options
     assetFileNames,
     banner,
     chunkFileNames,
@@ -83,7 +83,7 @@ export default { // 可以是一个数组（用于多个输入的情况）
     sourcemapFile,
     sourcemapPathTransform,
 
-    // 危险区
+    // danger zone
     amd,
     esModule,
     exports,
@@ -108,10 +108,10 @@ export default { // 可以是一个数组（用于多个输入的情况）
 };
 ```
 
-甚至在监听模式下，如果你想一次从几个无关的输入项构建 bundle，就可以在配置文件中导出一个**数组**。而为了使用相同的输入项构建不同的 bundle，你可以为每个输入项提供一个输出项的数组。
+You can export an **array** from your config file to build bundles from several different unrelated inputs at once, even in watch mode. To build different bundles with the same input, you supply an array of output options for each input:
 
 ```javascript
-// rollup.config.js (构建多个 bundle)
+// rollup.config.js (building more than one bundle)
 
 export default [{
   input: 'main-a.js',
@@ -134,7 +134,7 @@ export default [{
 }];
 ```
 
-如果你想异步创建配置，Rollup 也能处理结果是一个对象或者数组的 `Promise`。
+If you want to create your config asynchronously, Rollup can also handle a `Promise` which resolves to an object or an array.
 
 ```javascript
 // rollup.config.js
@@ -152,19 +152,19 @@ export default Promise.all([
 ])
 ```
 
-如果你想使用 Rollup 的配置文件，可以在命令行加上 `--config` 或者 `-c` 的选项。
+To use Rollup with a configuration file, pass the `--config` or `-c` flags:
 
 ```
-# 将自定义配置文件的路径传给 Rollup
+# pass a custom config file location to Rollup
 rollup --config my.config.js
 
-# 如果你不传文件名, Rollup 将会尝试
-# 按照以下顺序加载配置文件：
+# if you do not pass a file name, Rollup will try to load
+# configuration files in the following order:
 # rollup.config.mjs -> rollup.config.cjs -> rollup.config.js
 rollup --config
 ```
 
-你也可以导出返回上述任何配置格式的函数。这个函数会接收当前命令行的参数，因此你可以动态调整配置以遵守 [`--silent`](guide/en/#--silent)。甚至你还可以在命令行加上 `config` 前缀来定义自己的命令行选项：
+You can also export a function that returns any of the above configuration formats. This function will be passed the current command line arguments so that you can dynamically adapt your configuration to respect e.g. [`--silent`](guide/en/#--silent). You can even define your own command line options if you prefix them with `config`:
 
 ```javascript
 // rollup.config.js
@@ -179,16 +179,16 @@ export default commandLineArgs => {
 }
 ```
 
-如果你现在运行 `rollup --config --configDebug`，就会使用 debug 配置。
+If you now run `rollup --config --configDebug`, the debug configuration will be used.
 
-默认情况下，命令行参数始终会覆盖从配置文件中导出的各个值。如果你想改变这样的方式，可以在 `commandLineArgs` 对象中删除命令行参数，这样使得 Rollup 会忽略命令行参数：
+By default, command line arguments will always override the respective values exported from a config file. If you want to change this behaviour, you can make Rollup ignore command line arguments by deleting them from the `commandLineArgs` object:
 
 ```javascript
 // rollup.config.js
 export default commandLineArgs => {
   const inputBase = commandLineArgs.input || 'main.js';
 
-  // 这会使 Rollup 忽略命令行参数
+  // this will make Rollup ignore the CLI argument
   delete commandLineArgs.input;
   return {
     input: 'src/entries/' + inputBase,
@@ -197,29 +197,29 @@ export default commandLineArgs => {
 }
 ```
 
-### 与 JavaScript API 的区别
+### Differences to the JavaScript API
 
-尽管配置文件提供了配置 Rollup 的简单方式，但是它也限制了 Rollup 如何能被调用以及在何处进行的配置。尤其是如果你想要在另一个构建工具中重新打包 Rollup，或者想要把它集成到高级的构建进程中，那么最好是在脚本中用编程的方式调用 Rollup。
+While config files provide an easy way to configure Rollup, they also limit how Rollup can be invoked and where configuration is taken from. Especially if you are rebundling Rollup in another build tool or want to integrate it into an advanced build process, it may be better to directly invoke Rollup programmatically from your scripts.
 
-如果你想从配置文件切换为使用 [JavaScript API](guide/en/#javascript-api)，这里有一些需要注意的重要区别：
+If you want to switch from config files to using the [JavaScript API](guide/en/#javascript-api) at some point, there are some important differences to be aware of:
 
-- 使用 JavaScript API 时，传给 `rollup.rollup` 的配置必须是一个对象，并且不能包装在 Promise 或者函数中。
-- 你不能再使用数组作为配置。取而代之的是，你应该为每组 `inputOptions` 都运行一次 `rollup.rollup`。
-- `output` 配置将会会被忽略。取而代之的是，你应该为每组 `outputOptions` 都运行一次 `bundle.generate(outputOptions)` 或者 `bundle.write(outputOptions)`。
+- When using the JavaScript API, the configuration passed to `rollup.rollup` must be an object and cannot be wrapped in a Promise or a function.
+- You can no longer use an array of configurations. Instead, you should run `rollup.rollup` once for each set of `inputOptions`.
+- The `output` option will be ignored. Instead, you should run `bundle.generate(outputOptions)` or `bundle.write(outputOptions)` once for each set of `outputOptions`.
 
-### 从 Node 包中加载配置
+### Loading a configuration from a Node package
 
-为了实现互通性，Rollup 也支持从安装在 `node_modules` 目录下的包中加载配置文件。
+For interoperability, Rollup also supports loading configuration files from packages installed into `node_modules`:
 
 ```
-# Rollup 首先会尝试加载 "rollup-config-my-special-config";
-# 如果失败，Rollup 则会尝试加载 "my-special-config"
+# this will first try to load the package "rollup-config-my-special-config";
+# if that fails, it will then try to load "my-special-config"
 rollup --config node:my-special-config
 ```
 
-### 使用未转译的配置文件
+### Using untranspiled config files
 
-默认情况下，Rollup 会希望配置文件是 ES 模块，并在依赖它们之前，把它们和它们 CommonJS 的相关导入打包和转译。这是一个很快的过程，其优点就是易于在你的配置和 ES 模块代码库之间共享代码。如果你想写 CommonJS 的配置来替代，可以通过使用 `.cjs` 的拓展名来跳过这个过程。
+By default, Rollup will expect config files to be ES modules and bundle and transpile them and their relative imports to CommonJS before requiring them. This is a fast process and has the advantage that it is easy to share code between your configuration and an ES module code base. If you want to write your configuration as CommonJS instead, you can skip this process by using the `.cjs` extension:
 
 ```javascript
 // rollup.config.cjs
@@ -232,21 +232,21 @@ module.exports = {
 };
 ```
 
-如果不仅要在命令行中使用配置文件，也要在自定义脚本中以编程的方式使用，那么这可能是合适的。
+It may be pertinent if you want to use the config file not only from the command line, but also from your custom scripts programmatically.
 
-另一方面，如果你使用的是 Node 13 或者更高版本，并且在你的 `package.json` 中有 `"type": "module"`，Rollup 的转译过程将阻止你的配置文件导入本身就是 ES 模块的 package。在这种情况下，将文件拓展名改为 `.mjs` 将指示 Rollup 将配置直接导入为 ES 模块。但是请注意，这只在 Node 13+ 有效；在旧版本的 Node 环境下，对待 `.mjs` 就像对待 `.js`。
+On the other hand if you are using at least Node 13 and have `"type": "module"` in your `package.json` file, Rollup's transpilation will prevent your configuration file from importing packages that are themselves ES modules. In that case, changing your file extension to `.mjs` will instruct Rollup to import your configuration directly as an ES module. However note that this is specific to Node 13+; on older Node versions, `.mjs` is treated just like `.js`.
 
-在 Node 13+ 环境下，使用 `.mjs` 会有一些潜在的陷阱：
+There are some potential gotchas when using `.mjs` on Node 13+:
 
-- 你只能从 CommonJS 插件中获取默认的导出。
-- 你可能无法导入 JSON 文件，例如：`package.json file`。有两种方式可以解决这个问题
-  - 通过以下方式运行 Rollup
+- You will only get a default export from CommonJS plugins
+- You may not be able to import JSON files such as your `package.json file`. There are two ways to go around this:
+  - run Rollup CLI via
 
     ```
     node --experimental-json-modules ./node_modules/.bin/rollup --config
     ```
     
-  - 创建一个依赖 JSON 文件的 CommonJS 的包装器:
+  - create a CommonJS wrapper that requires the JSON file:
   
     ```js
     // load-package.cjs
@@ -257,117 +257,117 @@ module.exports = {
     ...
     ```
 
-### 命令行标志
+### Command line flags
 
-很多选项都有等价的命令行参数。如果你使用的话，此处传递的所有参数都将覆盖配置文件。这是所有支持的选项列表：
+Many options have command line equivalents. In those cases, any arguments passed here will override the config file, if you're using one. This is a list of all supported options:
 
 ```text
--c, --config <filename>     使用配置文件（如果使用参数但是值没有
-                              指定, 默认就是 rollup.config.js）
--d, --dir <dirname>         构建块的目录（如果不存在，就打印到标准输出）
--e, --external <ids>        逗号分隔列出排除的模块 ID
--f, --format <format>       输出类型 (amd, cjs, es, iife, umd, system)
--g, --globals <pairs>       逗号分隔列出 `moduleID:Global` 对
--h, --help                  显示帮助信息
--i, --input <filename>      输入 (替代 <entry file>)
--m, --sourcemap             生成 sourcemap (`-m inline` 生成行内 map)
--n, --name <name>           UMD 导出的名字
--o, --file <output>         单个的输出文件（如果不存在，就打印到标准输出）
--p, --plugin <plugin>       使用指定的插件（可能重复）
--v, --version               显示版本号
--w, --watch                 监听 bundle 中的文件并在文件改变时重新构建
---amd.id <id>               AMD 模块 ID（默认是匿名的）
---amd.define <name>         代替 `define` 使用的功能
---assetFileNames <pattern>  构建的资源命名模式
---banner <text>             插入 bundle 顶部（包装器之外）的代码
---chunkFileNames <pattern>  次要构建块的命名模式
---compact                   压缩包装器代码
---context <variable>        指定顶层的 `this` 值
---entryFileNames <pattern>  入口构建块的命名模式
---environment <values>      设置传递到配置文件 (看示例)
---no-esModule               不增加 __esModule 属性
---exports <mode>            指定导出的模式 (auto, default, named, none)
---extend                    通过 --name 定义，拓展全局变量
---no-externalLiveBindings   不生成实施绑定的代码
---footer <text>             插入到 bundle 末尾的代码（包装器外部）
---no-freeze                 不冻结命名空间对象
---no-hoistTransitiveImports 不提升传递性的导入到入口构建块
---no-indent                 结果中不进行缩进
---no-interop                不包含互操作块
---inlineDynamicImports      使用动态导入时创建单个 bundle
---intro <text>              在 bundle 顶部插入代码（包装器内部）
---minifyInternalExports     强制或者禁用内部导出的压缩
---namespaceToStringTag      为命名空间创建正确的 `.toString` 方法
---noConflict                为 UMD 全局变量生成 noConflict 方法
---outro <text>              在 bundle 的末尾插入代码（包装器内部）
---preferConst               使用 `const` 代替 `var` 进行导出
---no-preserveEntrySignatures 避免表面的构建块作为入口
---preserveModules           保留模块结构
---preserveSymlinks          解析文件时不要遵循符号链接
---shimMissingExports        给丢失的导出创建填充变量
---silent                    不打印警告
---sourcemapExcludeSources   source map 中不包含源码
---sourcemapFile <file>      source map 中指定 bundle 的路径
---no-stdin                  不从标准输入中读取 "-"
---no-strict                 在生成的模块中不使用 `"use strict";`
---strictDeprecations        不推荐使用的特性抛出错误
---systemNullSetters         用 `null` 替换空的 SystemJS setter
---no-treeshake              禁用 tree-shaking 优化
---no-treeshake.annotations  忽略纯的调用注释
---no-treeshake.moduleSideEffects 假设模块没有副作用
---no-treeshake.propertyReadSideEffects 忽略属性访问的副作用
---no-treeshake.tryCatchDeoptimization 不关闭 try-catch-tree-shaking
---no-treeshake.unknownGlobalSideEffects 假设未知的全局变量不抛出
---waitForBundleInput        等待 bundle 的输入文件
---watch.buildDelay <number> 监听重新构建的延时
---no-watch.clearScreen      重新构建时不进行清屏
---watch.skipWrite           监听时不写入文件到磁盘
---watch.exclude <files>     监听时排除的文件
---watch.include <files>     限制监听指定的文件
+-c, --config <filename>     Use this config file (if argument is used but value
+                              is unspecified, defaults to rollup.config.js)
+-d, --dir <dirname>         Directory for chunks (if absent, prints to stdout)
+-e, --external <ids>        Comma-separate list of module IDs to exclude
+-f, --format <format>       Type of output (amd, cjs, es, iife, umd, system)
+-g, --globals <pairs>       Comma-separate list of `moduleID:Global` pairs
+-h, --help                  Show this help message
+-i, --input <filename>      Input (alternative to <entry file>)
+-m, --sourcemap             Generate sourcemap (`-m inline` for inline map)
+-n, --name <name>           Name for UMD export
+-o, --file <output>         Single output file (if absent, prints to stdout)
+-p, --plugin <plugin>       Use the plugin specified (may be repeated)
+-v, --version               Show version number
+-w, --watch                 Watch files in bundle and rebuild on changes
+--amd.id <id>               ID for AMD module (default is anonymous)
+--amd.define <name>         Function to use in place of `define`
+--assetFileNames <pattern>  Name pattern for emitted assets
+--banner <text>             Code to insert at top of bundle (outside wrapper)
+--chunkFileNames <pattern>  Name pattern for emitted secondary chunks
+--compact                   Minify wrapper code
+--context <variable>        Specify top-level `this` value
+--entryFileNames <pattern>  Name pattern for emitted entry chunks
+--environment <values>      Settings passed to config file (see example)
+--no-esModule               Do not add __esModule property
+--exports <mode>            Specify export mode (auto, default, named, none)
+--extend                    Extend global variable defined by --name
+--no-externalLiveBindings   Do not generate code to support live bindings
+--footer <text>             Code to insert at end of bundle (outside wrapper)
+--no-freeze                 Do not freeze namespace objects
+--no-hoistTransitiveImports Do not hoist transitive imports into entry chunks
+--no-indent                 Don't indent result
+--no-interop                Do not include interop block
+--inlineDynamicImports      Create single bundle when using dynamic imports
+--intro <text>              Code to insert at top of bundle (inside wrapper)
+--minifyInternalExports     Force or disable minification of internal exports
+--namespaceToStringTag      Create proper `.toString` methods for namespaces
+--noConflict                Generate a noConflict method for UMD globals
+--outro <text>              Code to insert at end of bundle (inside wrapper)
+--preferConst               Use `const` instead of `var` for exports
+--no-preserveEntrySignatures Avoid facade chunks for entry points
+--preserveModules           Preserve module structure
+--preserveSymlinks          Do not follow symlinks when resolving files
+--shimMissingExports        Create shim variables for missing exports
+--silent                    Don't print warnings
+--sourcemapExcludeSources   Do not include source code in source maps
+--sourcemapFile <file>      Specify bundle position for source maps
+--no-stdin                  do not read "-" from stdin
+--no-strict                 Don't emit `"use strict";` in the generated modules
+--strictDeprecations        Throw errors for deprecated features
+--systemNullSetters         Replace empty SystemJS setters with `null`
+--no-treeshake              Disable tree-shaking optimisations
+--no-treeshake.annotations  Ignore pure call annotations
+--no-treeshake.moduleSideEffects Assume modules have no side-effects
+--no-treeshake.propertyReadSideEffects Ignore property access side-effects
+--no-treeshake.tryCatchDeoptimization Do not turn off try-catch-tree-shaking
+--no-treeshake.unknownGlobalSideEffects Assume unknown globals do not throw
+--waitForBundleInput        Wait for bundle input files
+--watch.buildDelay <number> Throttle watch rebuilds
+--no-watch.clearScreen      Do not clear the screen when rebuilding
+--watch.skipWrite           Do not write files to disk when watching
+--watch.exclude <files>     Exclude files from being watched
+--watch.include <files>     Limit watching to specified files
 ```
 
-下面列出来的选项只能在命令行接口使用。其他所有的选项都一一对应并会覆盖配置文件的等价配置项，具体细节可以参考 [配置项的完整列表](guide/en/#big-list-of-options)。
+The flags listed below are only available via the command line interface. All other flags correspond to and override their config file equivalents, see the [big list of options](guide/en/#big-list-of-options) for details.
 
 #### `-h`/`--help`
 
-打印帮助文档。
+Print the help document.
 
 #### `-p <plugin>`, `--plugin <plugin>`
 
-使用指定的插件。这里有几种方法可以指定插件：
+Use the specified plugin. There are several ways to specify plugins here:
 
-- 通过相对路径：
+- Via a relative path:
 
   ```
   rollup -i input.js -f es -p ./my-plugin.js
   ```
 
-  这个文件应该导出一个 plugin 对象或者返回 plugin 对象的函数。
-- 通过安装在本地或者全局的 `node_modules` 文件夹的插件名字：
+  The file should export a plugin object or a function returning such an object.
+- Via the name of a plugin that is installed in a local or global `node_modules` folder:
 
   ```
   rollup -i input.js -f es -p @rollup/plugin-node-resolve
   ```
 
-  如果插件的名字不是以 `rollup-plugin-` 或者 `@rollup/plugin-` 开头，Rollup 会自动尝试添加这些前缀：
+  If the plugin name does not start with `rollup-plugin-` or `@rollup/plugin-`, Rollup will automatically try adding these prefixes:
 
   ```
   rollup -i input.js -f es -p node-resolve
   ```
 
-- 通过内联实现：
+- Via an inline implementation:
 
   ```
   rollup -i input.js -f es -p '{transform: (c, i) => `/* ${JSON.stringify(i)} */\n${c}`}'
   ```
 
-如果想要加载多个插件，则可以重复该选项，或者提供按逗号分隔的名称列表：
+If you want to load more than one plugin, you can repeat the option or supply a comma-separated list of names:
 
 ```
 rollup -i input.js -f es -p node-resolve -p commonjs,json
 ```
 
-默认情况下，导出方法的插件在创建时被调用应该是不接收参数的。然而你也可以传递自定义的参数：
+By default, plugins that export functions will be called with no argument to create the plugin. You can however pass a custom argument as well:
 
 ```
 rollup -i input.js -f es -p 'terser={output: {beautify: true, indent_level: 2}}'
@@ -375,27 +375,27 @@ rollup -i input.js -f es -p 'terser={output: {beautify: true, indent_level: 2}}'
 
 #### `-v`/`--version`
 
-打印安装的版本号。
+Print the installed version number.
 
 #### `-w`/`--watch`
 
-当源文件在磁盘上发生更改时，重新构建 bundle。
+Rebuild the bundle when its source files change on disk.
 
-_注意: 在监听模式下，环境变量 `ROLLUP_WATCH` 将会被 Rollup 的命令行接口设置成 `"true"`，并且可以被其他进程所检查到。插件应该改为检查 [`this.meta.watchMode`](guide/en/#thismeta-rollupversion-string-watchmode-boolean)，因为它独立于命令行接口。_
+_Note: While in watch mode, the `ROLLUP_WATCH` environment variable will be set to `"true"` by Rollup's command line interface and can be checked by other processes. Plugins should instead check [`this.meta.watchMode`](guide/en/#thismeta-rollupversion-string-watchmode-boolean), which is independent of the command line interface._
 
 #### `--silent`
 
-不在控制台打印警告。如果配置文件包含一个 `onwarn` 的处理方法，那么这个方法就会被调用。要手动阻止这种情况，你可以按照 [配置文件](guide/en/#configuration-files) 末尾的说明访问配置文件中的命令行选项。
+Don't print warnings to the console. If your configuration file contains an `onwarn` handler, this handler will still be called. To manually prevent that, you can access the command line options in your configuration file as described at the end of [Configuration Files](guide/en/#configuration-files).
 
 #### `--environment <values>`
 
-通过 `process.ENV` 传递额外的设置给配置文件。
+Pass additional settings to the config file via `process.ENV`.
 
 ```sh
 rollup -c --environment INCLUDE_DEPS,BUILD:production
 ```
 
-将设置 `process.env.INCLUDE_DEPS === 'true'` 和 `process.env.BUILD === 'production'`。你可以多次使用这个选项。在这种情况下，后面设置的变量将覆盖前面的定义。这保证了你可以覆盖 `package.json` 脚本中的环境变量：
+will set `process.env.INCLUDE_DEPS === 'true'` and `process.env.BUILD === 'production'`. You can use this option several times. In that case, subsequently set variables will overwrite previous definitions. This enables you for instance to overwrite environment variables in `package.json` scripts:
 
 ```json
 // in package.json
@@ -406,36 +406,36 @@ rollup -c --environment INCLUDE_DEPS,BUILD:production
 }
 ```
 
-如果通过以下的方式调用脚本：
+If you call this script via:
 
 ```
 npm run build -- --environment BUILD:development
 ```
 
-那么配置文件就会接收 `process.env.INCLUDE_DEPS === 'true'` 和 `process.env.BUILD === 'development'`。
+then the config file will receive `process.env.INCLUDE_DEPS === 'true'` and `process.env.BUILD === 'development'`.
 
 #### `--waitForBundleInput`
 
-如果其中一个入口文件不可访问，将不会抛出错误。相反，它会等到所有文件都存在后再开始构建。当 Rollup 正在消费另一个进程的输出时，这个功能很有用，尤其是在监听模式下。
+This will not throw an error if one of the entry point files is not available. Instead, it will wait until all files are present before starting the build. This is useful, especially in watch mode, when Rollup is consuming the output of another process.
 
 #### `--no-stdin`
 
-不从 `stdin` 读取文件。设置这个标志可以阻止传递内容到 Rollup，也保证了 Rollup 将 `-` 解释为常规文件名，而不是将其解释为 `stdin`。另见 [从标准输入读取文件](guide/en/#reading-a-file-from-stdin)。
+Do not read files from `stdin`. Setting this flag will prevent piping content to Rollup and make sure Rollup interprets `-` as a regular file name instead of interpreting this as the name of `stdin`. See also [Reading a file from stdin](guide/en/#reading-a-file-from-stdin).
 
-### 从标准输入中读取文件
+### Reading a file from stdin
 
-使用命令行界面时，Rollup 也能从标准输入读取内容：
+When using the command line interface, Rollup can also read content from stdin:
 
 ```
 echo "export const foo = 42;" | rollup --format cjs --file out.js
 ```
 
-当文件包含导入时，Rollup 将尝试相对于当前工作路径来解析它们。当使用配置文件时，如果入口的文件名是 `-`，Rollup 将仅用 `stdin` 作为入口。要从标准输入读取一个非入口的文件，只需要给它取名为 `-`，它是内部引用标准输入的文件名。即：
+When this file contains imports, Rollup will try to resolve them relative to the current working directory. When a config file is used, Rollup will only use `stdin` as an entry point if the file name of the entry point is `-`. To read a non-entry-point file from stdin, just call it `-`, which is the file name that is used internally to reference `stdin`. I.e.
 
 ```js
 import foo from "-";
 ```
 
-在任何文件中，都将促使 Rollup 尝试从 `stdin` 读取导入文件，并且将其默认导出赋值给 `foo`。你可以通过 [`--no-stdin`](guide/en/#--no-stdin) 命令行选项来使得 Rollup 像对待常规文件名一样对待 `-`。
+in any file will prompt Rollup to try to read the imported file from `stdin` and assign the default export to `foo`. You can pass the [`--no-stdin`](guide/en/#--no-stdin) CLI flag to Rollup to treat `-` as a regular file name instead.
 
-JavaScript API 始终将 `-` 视为普通文件名。
+The JavaScript API will always treat `-` as a regular file name.
