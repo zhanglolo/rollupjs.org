@@ -29,7 +29,7 @@
 		"dev": "sapper dev",
 		"build": "npm run clean && npm run update-guide && sapper export --legacy && cp -r __sapper__/export export",
 		"start": "sirv export",
-		"update-guide": "git submodule update --init --recursive && shx rm -rf guide/zh guide/en && shx cp -r rollup-submodule/docs/ guide/en && shx cp -r rollup-submodule/docs/ guide/zh",
+		"update-guide": "git submodule update --init --recursive && shx rm -rf guide/en && shx cp -r rollup-submodule/docs/ guide/en",
 		"publish-updated-guide": "git pull && git submodule update --init --recursive && cd rollup-submodule && git checkout master && git pull && cd .. && npm test && git add rollup-submodule && git commit -m \"Update guide\" && git push",
 		"clean": "rm -rf export/ && rm -rf __sapper__/",
 		"lint": "prettier --write src/**/*.{js,html,svelte} test/**/*.js",
