@@ -307,7 +307,7 @@ rollup src/main.js -f cjs -d dist
 node -e "require('./dist/main.js')()"
 ```
 
-如果我们没有使用 `--dir` 可选项，Rollup 将会再次将块信息打印块到 `stdout` 中，添加注释来突出这个块的边界:
+如果我们没有使用 `--dir` 可选项，Rollup 将会再次将块信息打印到 `stdout` 中，添加注释来突出这个块的边界:
 
 ```js
 //→ main.js:
@@ -378,7 +378,7 @@ exports.default = foo;
 
 注意多个入口如何导入相同的共享块。Rollup 不会重复代码而是会新增额外的满足需求最低限度必要的块 （chunk）.再次，通过 `--dir` 可选项写文件到电脑的电脑的硬盘上。
 
-你可以通过原生 ES 模块，符合 AMD 规范的加载或者 SystemJS 为你的浏览器构建相同的代码。
+你可以通过原生 ES 模块，符合 AMD 规范的加载器或者 SystemJS 为你的浏览器构建相同的代码。
 
 例如，使用 `-f es` 作为本地模块:
 
