@@ -22,6 +22,15 @@ export default {
 
 如果你想要使用 `require` 和 `module.exports` 将配置文件写成一个 CommonJS 模块，则应该将文件扩展名更改为 `.cjs`，这会阻止 Rollup 尝试转译文件。此外，如果你使用的是 Node 13+，则将文件扩展名更改为 `.mjs` 也可以阻止 Rollup 进行编译，并将文件导入为 ES 模块。有关更多的详细信息以及为什么会存在这样的场景，请参见 [使用未转译的配置文件](guide/en/#using-untranspiled-config-files)。
 
+你也可以使用其他语言来编写配置文件，例如 TypeScript。为此，需要安装相应的 rollup 插件，
+例如 `@rollup/plugin-typescript`，然后使用命令 [`--configPlugin`](guide/en/#--configplugin-plugin):
+
+```
+rollup --config rollup.config.ts --configPlugin typescript
+```
+
+查看 [Config Intellisense](guide/en/#config-intellisense)，了解更多在配置文件中使用 TypeScript 类型的方法。
+
 配置文件支持的选项如下所示。关于每个选项的详情请查看 [配置项的完整列表](guide/en/#big-list-of-options)：
 
 ```javascript
@@ -82,6 +91,7 @@ export default { // 可以是一个数组（用于多个输入的情况）
     sourcemapExcludeSources,
     sourcemapFile,
     sourcemapPathTransform,
+    validate
 
     // 危险区
     amd,
@@ -104,7 +114,7 @@ export default { // 可以是一个数组（用于多个输入的情况）
     skipWrite,
     exclude,
     include
-  } | false
+  }
 };
 ```
 
@@ -142,7 +152,7 @@ import fetch from 'node-fetch';
 export default fetch('/some-remote-service-or-file-which-returns-actual-config');
 ```
 
-Similarly, you can do this as well:
+同样，也可以这样做：
 
 ```javascript
 // rollup.config.js (Promise resolving an array)
@@ -196,6 +206,41 @@ export default commandLineArgs => {
   }
 }
 ```
+
+#### 配置提示
+
+由于 Rollup 附带 TypeScript 类型，您可以利用 IDE 的提示和 JSDoc 类型提示：
+
+```javascript
+// rollup.config.js
+/**
+ * @type {import('rollup').RollupOptions}
+ */
+const config = {
+  // ...
+};
+
+export default config;
+```
+
+或者，也可以使用 `defineConfig` 助手函数，提供配置提示而不需要 JSDoc 注释：
+
+```javascript
+// rollup.config.js
+import { defineConfig } from 'rollup';
+
+export default defineConfig({
+  // ...
+});
+```
+
+除了 `RollupOptions` 和封装了类型的 `defineConfig` 助手函数，以下类型也是用的：
+
+- `OutputOptions`: 配置文件中的 `output` 
+- `Plugin`: 一个提供 `name` 和一些钩子的插件对象。所有钩子都是完全类型化的，以帮助插件开发。
+- `PluginImpl`: 将选项对象映射到插件对象的函数。大多数公共 Rollup 插件都遵循这种模式。
+
+您还可以通过 [`--configPlugin`](guide/en/#--configplugin-plugin) 选项直接使用 TypeScript 编写配置文件。
 
 ### 与 JavaScript API 的区别
 
@@ -324,6 +369,7 @@ module.exports = {
 --watch.skipWrite           监听时不写入文件到磁盘
 --watch.exclude <files>     监听时排除的文件
 --watch.include <files>     限制监听指定的文件
+--validate                  验证输出
 ```
 
 下面列出来的选项只能在命令行接口使用。其他所有的选项都一一对应并会覆盖配置文件的等价配置项，具体细节可以参考 [配置项的完整列表](guide/en/#big-list-of-options)。
@@ -372,6 +418,16 @@ rollup -i input.js -f es -p node-resolve -p commonjs,json
 ```
 rollup -i input.js -f es -p 'terser={output: {beautify: true, indent_level: 2}}'
 ```
+
+#### `--configPlugin <plugin>`
+
+允许指定 Rollup 插件来转换或以其他方式控制配置文件的解析。主要好处是允许使用非 JavaScript 配置文件。例如下面的例子，在安装了 `@rollup/plugin-typescript` 之后，使用 TypeScript 编写配置：
+
+```
+rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript
+```
+
+它支持与 --plugin 选项相同的语法，即，您可以多次指定该选项，您可以省略 @rollup/plugin- 前缀而只编写打字稿，您可以通过 ={...} 指定插件选项。
 
 #### `-v`/`--version`
 
